@@ -49,30 +49,27 @@
   html,body{height:auto;min-height:100%;overflow-x:hidden;overflow-y:auto}
   body{background-attachment:fixed}
   #page{height:auto;min-height:100%;width:100%;flex-direction:column;align-items:stretch}
-  #stageWrap{width:100%;flex:0 0 auto;min-height:0;align-items:flex-start;justify-content:center;padding:10px max(8px,env(safe-area-inset-right,0px)) 78px max(8px,env(safe-area-inset-left,0px));overflow:visible}
-  #stage{margin:0 auto;width:419px;height:848px;max-width:none}
-  #scaler{transform:scale(.94)}
-  #panel{position:static;inset:auto;width:100%;height:auto;max-height:none;flex:0 0 auto;border-left:0;border-top:1px solid var(--pn-line);box-shadow:none;border-radius:22px 22px 0 0;overflow:visible}
-  .pn-h{position:sticky;top:0;z-index:4;background:var(--pn-bg);border-radius:22px 22px 0 0}
-  .pn-tabs{position:sticky;top:57px;z-index:4;background:var(--pn-card)}
-  .pn-b{flex:none;overflow:visible;padding-bottom:110px}
-  /* Mobile is an editor-first layout: phone preview above, editor always visible below. */
-  #panel{display:flex!important;max-width:680px;margin:0 auto 32px;border-radius:22px;overflow:hidden}
+  /* Mobile: keep the complete phone compact so the editor is visible on the FIRST screen. */
+  #stageWrap{width:100%;flex:0 0 auto;min-height:0;align-items:flex-start;justify-content:center;padding:8px max(6px,env(safe-area-inset-right,0px)) 10px max(6px,env(safe-area-inset-left,0px));overflow:visible}
+  #stage{margin:0 auto;width:241px;height:487px;max-width:none}
+  #scaler{transform:scale(.54)}
+  #panel{position:static;inset:auto;width:calc(100% - 12px);height:auto;max-height:none;flex:0 0 auto;border-left:0;border-top:1px solid var(--pn-line);box-shadow:none;border-radius:20px;margin:0 auto 28px;overflow:hidden;display:flex!important}
   #panel[hidden]{display:flex!important}
-  #stageWrap{padding-bottom:18px}
+  .pn-h{position:static;z-index:4;background:var(--pn-bg);border-radius:20px 20px 0 0;padding-top:12px;padding-bottom:8px}
+  .pn-h b{font-size:16px}
+  .pn-tabs{position:sticky;top:0;z-index:5;background:var(--pn-card);padding:4px;margin:0 8px 6px}
+  .pn-tabs button{min-height:38px;font-size:12px}
+  .pn-b{flex:none;overflow:visible;padding:4px 10px max(40px,env(safe-area-inset-bottom,0px))}
   #fab{display:none!important}
   .pn-h button[data-panel-close]{display:none}
-  .pn-tabs{position:sticky;top:0;z-index:5;background:var(--pn-card);padding:4px}
-  .pn-b{padding-bottom:max(40px,env(safe-area-inset-bottom,0px))}
-  #toast{bottom:max(78px,calc(env(safe-area-inset-bottom,0px) + 68px))}
+  #toast{bottom:max(16px,env(safe-area-inset-bottom,0px))}
 }
-/* Pure-CSS mobile fallback: iOS file preview may not run JavaScript. */
-@media(max-width:430px){#stage{width:401px;height:812px}#scaler{transform:scale(.90)}}
-@media(max-width:410px){#stage{width:383px;height:776px}#scaler{transform:scale(.86)}}
-@media(max-width:390px){#stage{width:366px;height:740px}#scaler{transform:scale(.82)}}
-@media(max-width:370px){#stage{width:348px;height:704px}#scaler{transform:scale(.78)}}
-@media(max-width:350px){#stage{width:330px;height:668px}#scaler{transform:scale(.74)}}
-@media(max-width:330px){#stage{width:312px;height:632px}#scaler{transform:scale(.70)}}
+/* CSS fallback also keeps the preview compact when JS is delayed/blocked. */
+@media(max-width:430px){#stage{width:232px;height:469px}#scaler{transform:scale(.52)}}
+@media(max-width:390px){#stage{width:223px;height:451px}#scaler{transform:scale(.50)}}
+@media(max-width:370px){#stage{width:214px;height:433px}#scaler{transform:scale(.48)}}
+@media(max-width:350px){#stage{width:205px;height:415px}#scaler{transform:scale(.46)}}
+@media(max-width:330px){#stage{width:196px;height:397px}#scaler{transform:scale(.44)}}
 @media(max-width:520px){
   #stageWrap{padding-left:4px;padding-right:4px}
   .fab-b span{display:none}.fab-b{width:48px;height:48px;justify-content:center;padding:0;border-radius:24px}
@@ -176,7 +173,7 @@ async function handleUpload(inp){const f=inp.files?.[0];if(!f)return;toast('사�
 function uploadControl(label,target,current,round=false,accept='image/*',kind='image'){const id='up_'+uid();return `<div class="thumbrow"><div class="thumb ${round?'round':''}">${current?`<img src="${esc(current)}">`:'미리보기'}</div><div style="flex:1"><div style="font-size:12px;color:var(--pn-mute);margin-bottom:6px">${esc(label)}</div><label class="upload-btn" for="${id}">사진 선택</label><input class="file-real" id="${id}" type="file" accept="${accept}" data-upload="${kind}" data-target="${esc(target)}"></div></div>`}
 function opt(v,l,cur){return `<option value="${v}" ${cur===v?'selected':''}>${l}</option>`}
 function fontSelect(cur,attrs=''){return `<select ${attrs}>${opt('inherit','기본 폰트 따라가기',cur)}${opt('system','iPhone 시스템',cur)}${opt('noto','Noto Sans 계열',cur)}${opt('round','둥근 고딕',cur)}${opt('serif','명조/Serif',cur)}${opt('mono','Monospace',cur)}${S.sys.customFontData?opt('custom','업로드한 폰트',cur):''}</select>`}
-function renderPanel(){const p=$('#panel');const mobile=window.matchMedia('(max-width:999px)').matches;if(S.readonly||(!U.panel&&!mobile)){p.hidden=true;return}p.hidden=false;const tabs=[['device','기기'],['apps','앱'],['chat','대화'],['call','통화'],['public','공개']];let b='';if(U.tab==='device')b=panelDevice();if(U.tab==='apps')b=panelApps();if(U.tab==='chat')b=panelChat();if(U.tab==='call')b=panelCall();if(U.tab==='public')b=panelPublic();p.innerHTML=`<div class="pn-h"><b>휴대폰 메이커 <small style="display:block;color:var(--pn-mute);font-size:11px;font-weight:500;margin-top:2px">수정하면 위 휴대폰에 바로 반영됩니다</small></b><button data-panel-close>×</button></div><div class="pn-tabs">${tabs.map(([k,l])=>`<button data-tab="${k}" class="${U.tab===k?'on':''}">${l}</button>`).join('')}</div><div class="pn-b">${b}</div>`}
+function renderPanel(){const p=$('#panel');const mobile=window.matchMedia('(max-width:999px)').matches;if(S.readonly||(!U.panel&&!mobile)){p.hidden=true;return}p.hidden=false;const tabs=[['device','기기'],['apps','앱'],['chat','대화'],['call','통화'],['public','공개']];let b='';if(U.tab==='device')b=panelDevice();if(U.tab==='apps')b=panelApps();if(U.tab==='chat')b=panelChat();if(U.tab==='call')b=panelCall();if(U.tab==='public')b=panelPublic();p.innerHTML=`<div class="pn-h"><b>휴대폰 메이커 <small style="display:block;color:var(--pn-mute);font-size:11px;font-weight:500;margin-top:2px">↓ 아래에서 바로 편집 · 수정 즉시 위 폰에 반영</small></b><button data-panel-close>×</button></div><div class="pn-tabs">${tabs.map(([k,l])=>`<button data-tab="${k}" class="${U.tab===k?'on':''}">${l}</button>`).join('')}</div><div class="pn-b">${b}</div>`}
 function panelDevice(){return `<section><h4>날짜 · 상태바</h4><div class="pn-g2"><label>날짜<input type="date" data-bind="sys.date" value="${esc(S.sys.date)}"></label><label>시간<input type="time" data-bind="sys.time" value="${esc(S.sys.time)}"></label></div><label class="pn-sw"><input type="checkbox" data-bind-check="sys.live" ${S.sys.live?'checked':''}><span></span>실시간으로 시간 흐르기</label><label>배터리 <b>${S.sys.battery}%</b><input type="range" min="1" max="100" data-bind-num="sys.battery" value="${S.sys.battery}"></label><div class="pn-g2"><label class="pn-sw"><input type="checkbox" data-bind-check="sys.wifi" ${S.sys.wifi?'checked':''}><span></span>Wi‑Fi</label><label class="pn-sw"><input type="checkbox" data-bind-check="sys.airplane" ${S.sys.airplane?'checked':''}><span></span>비행기 모드</label></div><label>통신사<input data-bind="sys.carrier" value="${esc(S.sys.carrier)}"></label></section><section><h4>기기 · 폰트</h4><label>프레임 색상<select data-bind="sys.deviceColor">${[['natural','내추럴 티타늄'],['black','블랙 티타늄'],['white','화이트 티타늄'],['desert','데저트 티타늄'],['blue','블루 티타늄']].map(x=>opt(x[0],x[1],S.sys.deviceColor)).join('')}</select></label><label>휴대폰 기본 폰트<select data-bind="sys.baseFont">${opt('system','iPhone 시스템',S.sys.baseFont)}${opt('noto','Noto Sans 계열',S.sys.baseFont)}${opt('round','둥근 고딕',S.sys.baseFont)}${opt('serif','명조/Serif',S.sys.baseFont)}${opt('mono','Monospace',S.sys.baseFont)}${S.sys.customFontData?opt('custom','업로드한 폰트',S.sys.baseFont):''}</select></label><div><label class="upload-btn" for="fontUpload">폰트 파일 업로드</label><input id="fontUpload" class="file-real" type="file" accept=".ttf,.otf,.woff,.woff2,font/*" data-upload="customFont"><p class="pn-hint">${esc(S.sys.customFontName||'TTF · OTF · WOFF 지원')}</p></div></section><section><h4>배경 · 사용자</h4>${uploadControl('잠금화면 배경','lockWall',S.sys.lockWall)}${uploadControl('홈화면 배경','homeWall',S.sys.homeWall)}${uploadControl('휴대폰 주인 프로필','ownerAvatar',S.sys.ownerAvatar,true)}<label>주인 이름<input data-bind="sys.ownerName" value="${esc(S.sys.ownerName)}"></label></section><section><h4>잠금</h4><div class="pn-g2"><label>암호<input inputmode="numeric" maxlength="6" data-bind="sys.pin" value="${esc(S.sys.pin)}"></label><label class="pn-sw" style="align-self:end"><input type="checkbox" data-bind-check="sys.usePin" ${S.sys.usePin?'checked':''}><span></span>암호 사용</label></div><div class="pn-btns"><button data-lock-now>${U.locked?'잠금화면 보기':'지금 잠그기'}</button></div></section>`}
 function panelApps(){return `<section><h4>앱 선택</h4><div class="pn-list">${['kakao','band','discord','insta'].map(k=>`<button data-sel-app="${k}" class="${U.selApp===k?'on':''}"><span class="thumb" style="width:30px;height:30px"><img src="${esc(S.apps[k].icon)}"></span>${esc(S.apps[k].name)}<small>${S.apps[k].badge||0}</small></button>`).join('')}</div></section>${appSettings(U.selApp)}`}
 function appSettings(k){const a=S.apps[k];return `<section><h4>${esc(a.name)} 설정</h4>${uploadControl('앱 아이콘','appIcon:'+k,a.icon)}<label>앱 이름<input data-app-bind="name" data-app="${k}" value="${esc(a.name)}"></label><div class="pn-g2"><label>알림 배지<input type="number" min="0" max="999" data-app-num="badge" data-app="${k}" value="${a.badge||0}"></label><label>앱 폰트${fontSelect(a.font||'inherit',`data-app-bind="font" data-app="${k}"`)}</label></div><label class="pn-sw"><input type="checkbox" data-app-check="show" data-app="${k}" ${a.show?'checked':''}><span></span>홈 화면에 표시</label></section>`}
@@ -203,9 +200,10 @@ function fitStage(){
     const aw=Math.max(320,vw-panelW-24), ah=Math.max(500,vh-24);
     k=Math.min(1.12,aw/446,ah/902);
   }else{
-    // Mobile: width is the authority. The page may scroll vertically, but the phone must never crop horizontally.
-    const side=vw<=520?8:20;
-    k=Math.min(1,(vw-side)/446);
+    // Mobile editor: fit by BOTH width and height so the editor tabs are visible immediately.
+    const side=12;
+    const previewH=Math.min(500,Math.max(360,Math.round(vh*0.50)));
+    k=Math.min(.56,(vw-side)/446,previewH/902);
   }
   k=Math.max(.30,k);
   const scaler=$('#scaler'),stage=$('#stage');
